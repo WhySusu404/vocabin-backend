@@ -1,61 +1,6 @@
 const bcrypt = require('bcryptjs');
-const { generateAccessToken } = require('../utils/jwt');
+const { generateTokenResponse, verifyToken } = require('../utils/jwt');
 const User = require('../models/User');
-
-// Mock user storage (replace with actual database operations when MongoDB is connected)
-let mockUsers = [
-  {
-    _id: '64a123b456c789d012e345f6',
-    email: 'admin@vocabin.com',
-    password: '$2b$12$A3ddx4jSdZgfL4iqZXmJse4gfrL.qhWbFgTUqgkIujFvweM6FexQC', // password: admin123
-    firstName: 'Admin',
-    lastName: 'User',
-    role: 'admin',
-    isActive: true,
-    registrationDate: new Date(),
-    lastLogin: new Date(),
-    learningPreferences: {
-      difficulty: 'advanced',
-      studyTime: 30,
-      reminderEnabled: true
-    },
-    statistics: {
-      totalWordsLearned: 0,
-      currentStreak: 0,
-      longestStreak: 0,
-      totalStudyTime: 0,
-      lastStudyDate: null
-    }
-  },
-  {
-    _id: '64a123b456c789d012e345f7',
-    email: 'learner@vocabin.com',
-    password: '$2b$12$ZpfPBOh8my/Wl6TDkU55IO8paQwhN9K4wIgEMRXQXf2WjWPqwbGLi', // password: learner123
-    firstName: 'John',
-    lastName: 'Doe',
-    role: 'learner',
-    isActive: true,
-    registrationDate: new Date(),
-    lastLogin: new Date(),
-    learningPreferences: {
-      difficulty: 'beginner',
-      studyTime: 15,
-      reminderEnabled: true
-    },
-    statistics: {
-      totalWordsLearned: 25,
-      currentStreak: 3,
-      longestStreak: 7,
-      totalStudyTime: 120,
-      lastStudyDate: new Date(Date.now() - 24 * 60 * 60 * 1000) // Yesterday
-    }
-  }
-];
-
-// Generate unique ID (simple mock)
-const generateId = () => {
-  return '64a123b456c789d012e345' + Math.random().toString(36).substr(2, 2);
-};
 
 // Register new user
 const register = async (req, res) => {
@@ -77,55 +22,34 @@ const register = async (req, res) => {
     }
 
     // Check if user already exists
-    const existingUser = mockUsers.find(u => u.email.toLowerCase() === email.toLowerCase());
+    const existingUser = await User.findByEmail(email);
     if (existingUser) {
       return res.status(409).json({
         error: 'User already exists with this email'
       });
     }
 
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 12);
-
     // Create new user
-    const newUser = {
-      _id: generateId(),
+    const newUser = new User({
       email: email.toLowerCase(),
-      password: hashedPassword,
+      password,
       firstName: firstName.trim(),
       lastName: lastName.trim(),
       role: role,
-      profileImage: null,
-      isActive: true,
-      registrationDate: new Date(),
-      lastLogin: new Date(),
-      learningPreferences: {
-        difficulty: 'beginner',
-        studyTime: 15,
-        reminderEnabled: true
-      },
-      statistics: {
-        totalWordsLearned: 0,
-        currentStreak: 0,
-        longestStreak: 0,
-        totalStudyTime: 0,
-        lastStudyDate: null
-      }
-    };
+      isActive: true
+    });
 
-    // Add to mock storage
-    mockUsers.push(newUser);
+    await newUser.save();
 
-    // Generate token
-    const token = generateAccessToken(newUser);
+    // Update last login
+    await newUser.updateLastLogin();
 
-    // Return user without password
-    const { password: _, ...userWithoutPassword } = newUser;
+    // Generate token response
+    const tokenResponse = generateTokenResponse(newUser);
 
     res.status(201).json({
       message: 'User registered successfully',
-      user: userWithoutPassword,
-      token
+      ...tokenResponse
     });
 
   } catch (error) {
@@ -149,42 +73,38 @@ const login = async (req, res) => {
       });
     }
 
-    // Find user
-    const user = mockUsers.find(u => u.email.toLowerCase() === email.toLowerCase());
+    // Find user and include password for comparison
+    const user = await User.findOne({ email: email.toLowerCase() }).select('+password');
+    
     if (!user) {
       return res.status(401).json({
-        error: 'Invalid credentials'
+        error: 'Invalid email or password'
       });
     }
 
-    // Check if account is active
     if (!user.isActive) {
       return res.status(401).json({
-        error: 'Account is deactivated'
+        error: 'Account is deactivated. Please contact support.'
       });
     }
 
-    // Compare password
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    // Check password
+    const isPasswordValid = await user.comparePassword(password);
     if (!isPasswordValid) {
       return res.status(401).json({
-        error: 'Invalid credentials'
+        error: 'Invalid email or password'
       });
     }
 
     // Update last login
-    user.lastLogin = new Date();
+    await user.updateLastLogin();
 
-    // Generate token
-    const token = generateAccessToken(user);
-
-    // Return user without password
-    const { password: _, ...userWithoutPassword } = user;
+    // Generate token response
+    const tokenResponse = generateTokenResponse(user);
 
     res.json({
       message: 'Login successful',
-      user: userWithoutPassword,
-      token
+      ...tokenResponse
     });
 
   } catch (error) {
@@ -196,15 +116,18 @@ const login = async (req, res) => {
   }
 };
 
-// Logout user (client-side token removal, server-side blacklisting could be added)
+// Logout user
 const logout = async (req, res) => {
   try {
-    // In a production app, you might want to blacklist the token
-    // For now, we'll just send a success message
+    // In a more sophisticated implementation, you might:
+    // 1. Add the token to a blacklist
+    // 2. Store refresh tokens in database and invalidate them
+    // 3. Clear any server-side sessions
+    
     res.json({
-      message: 'Logout successful'
+      message: 'Logout successful',
+      timestamp: new Date().toISOString()
     });
-
   } catch (error) {
     console.error('Logout error:', error);
     res.status(500).json({
@@ -217,8 +140,8 @@ const logout = async (req, res) => {
 // Get current user profile
 const getProfile = async (req, res) => {
   try {
-    // req.user is set by authenticate middleware
-    const user = mockUsers.find(u => u._id === req.user._id);
+    // req.user is set by the authenticate middleware
+    const user = await User.findById(req.user._id);
     
     if (!user) {
       return res.status(404).json({
@@ -226,28 +149,175 @@ const getProfile = async (req, res) => {
       });
     }
 
-    const { password: _, ...userWithoutPassword } = user;
-    
     res.json({
-      user: userWithoutPassword
+      message: 'Profile retrieved successfully',
+      user: user.toPublicJSON()
     });
 
   } catch (error) {
     console.error('Get profile error:', error);
     res.status(500).json({
-      error: 'Failed to get profile',
+      error: 'Failed to retrieve profile',
       message: error.message
     });
   }
 };
 
-// Export mock users for testing
-const getMockUsers = () => mockUsers;
+// Update user profile
+const updateProfile = async (req, res) => {
+  try {
+    const { firstName, lastName, learningPreferences } = req.body;
+    const userId = req.user._id;
+
+    const updateData = {};
+    if (firstName) updateData.firstName = firstName.trim();
+    if (lastName) updateData.lastName = lastName.trim();
+    if (learningPreferences) updateData.learningPreferences = learningPreferences;
+
+    const user = await User.findByIdAndUpdate(
+      userId,
+      updateData,
+      { new: true, runValidators: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({
+        error: 'User not found'
+      });
+    }
+
+    res.json({
+      message: 'Profile updated successfully',
+      user: user.toPublicJSON()
+    });
+
+  } catch (error) {
+    console.error('Update profile error:', error);
+    res.status(500).json({
+      error: 'Failed to update profile',
+      message: error.message
+    });
+  }
+};
+
+// Change password
+const changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const userId = req.user._id;
+
+    // Validation
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({
+        error: 'Current password and new password are required'
+      });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({
+        error: 'New password must be at least 6 characters long'
+      });
+    }
+
+    // Find user with password
+    const user = await User.findById(userId).select('+password');
+    
+    if (!user) {
+      return res.status(404).json({
+        error: 'User not found'
+      });
+    }
+
+    // Check current password
+    const isCurrentPasswordValid = await user.comparePassword(currentPassword);
+    if (!isCurrentPasswordValid) {
+      return res.status(401).json({
+        error: 'Current password is incorrect'
+      });
+    }
+
+    // Update password
+    user.password = newPassword;
+    await user.save();
+
+    res.json({
+      message: 'Password changed successfully'
+    });
+
+  } catch (error) {
+    console.error('Change password error:', error);
+    res.status(500).json({
+      error: 'Failed to change password',
+      message: error.message
+    });
+  }
+};
+
+// Refresh token
+const refreshToken = async (req, res) => {
+  try {
+    const { refreshToken } = req.body;
+
+    if (!refreshToken) {
+      return res.status(400).json({
+        error: 'Refresh token is required'
+      });
+    }
+
+    // Verify refresh token
+    let decoded;
+    try {
+      decoded = verifyToken(refreshToken);
+    } catch (error) {
+      return res.status(401).json({
+        error: 'Invalid or expired refresh token'
+      });
+    }
+
+    // Check if it's actually a refresh token
+    if (decoded.type !== 'refresh') {
+      return res.status(401).json({
+        error: 'Invalid token type'
+      });
+    }
+
+    // Find user
+    const user = await User.findById(decoded.userId);
+    if (!user) {
+      return res.status(404).json({
+        error: 'User not found'
+      });
+    }
+
+    if (!user.isActive) {
+      return res.status(401).json({
+        error: 'Account is deactivated'
+      });
+    }
+
+    // Generate new token response
+    const tokenResponse = generateTokenResponse(user);
+
+    res.json({
+      message: 'Token refreshed successfully',
+      ...tokenResponse
+    });
+
+  } catch (error) {
+    console.error('Token refresh error:', error);
+    res.status(500).json({
+      error: 'Token refresh failed',
+      message: error.message
+    });
+  }
+};
 
 module.exports = {
   register,
   login,
   logout,
   getProfile,
-  getMockUsers
+  updateProfile,
+  changePassword,
+  refreshToken
 }; 

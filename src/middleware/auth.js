@@ -1,25 +1,5 @@
 const User = require('../models/User');
-const { verifyToken, extractTokenFromHeader } = require('../utils/jwt');
-
-// Mock user storage for development (replace with actual database queries when MongoDB is connected)
-const mockUsers = [
-  {
-    _id: '64a123b456c789d012e345f6',
-    email: 'admin@vocabin.com',
-    firstName: 'Admin',
-    lastName: 'User',
-    role: 'admin',
-    isActive: true
-  },
-  {
-    _id: '64a123b456c789d012e345f7',
-    email: 'learner@vocabin.com',
-    firstName: 'John',
-    lastName: 'Doe',
-    role: 'learner',
-    isActive: true
-  }
-];
+const { verifyToken, extractToken } = require('../utils/jwt');
 
 // Middleware to authenticate user
 const authenticate = async (req, res, next) => {
@@ -30,14 +10,16 @@ const authenticate = async (req, res, next) => {
       return res.status(401).json({ error: 'No authorization token provided' });
     }
     
-    const token = extractTokenFromHeader(authHeader);
+    const token = extractToken(authHeader);
+    
+    if (!token) {
+      return res.status(401).json({ error: 'Invalid authorization header format' });
+    }
+    
     const decoded = verifyToken(token);
     
-    // In production, you would query the database:
-    // const user = await User.findById(decoded.id).select('-password');
-    
-    // For now, use mock user data
-    const user = mockUsers.find(u => u._id === decoded.id);
+    // Query the actual database for the user
+    const user = await User.findById(decoded.userId).select('-password');
     
     if (!user) {
       return res.status(401).json({ error: 'User not found' });
@@ -99,7 +81,7 @@ const requireOwnershipOrAdmin = (getResourceUserId) => {
     const resourceUserId = getResourceUserId(req);
     
     // Check if user owns the resource
-    if (req.user._id !== resourceUserId) {
+    if (req.user._id.toString() !== resourceUserId) {
       return res.status(403).json({ 
         error: 'Access denied',
         message: 'You can only access your own resources'
@@ -116,14 +98,17 @@ const optionalAuth = async (req, res, next) => {
     const authHeader = req.headers.authorization;
     
     if (authHeader) {
-      const token = extractTokenFromHeader(authHeader);
-      const decoded = verifyToken(token);
+      const token = extractToken(authHeader);
       
-      // Find user (mock for now)
-      const user = mockUsers.find(u => u._id === decoded.id);
-      
-      if (user && user.isActive) {
-        req.user = user;
+      if (token) {
+        const decoded = verifyToken(token);
+        
+        // Find user in database
+        const user = await User.findById(decoded.userId).select('-password');
+        
+        if (user && user.isActive) {
+          req.user = user;
+        }
       }
     }
     
