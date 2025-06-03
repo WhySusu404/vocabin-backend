@@ -238,16 +238,36 @@ const getCurrentWord = async (req, res) => {
     }
 
     // Get user's progress for this dictionary
-    const userDictionary = await UserDictionary.findOne({
+    let userDictionary = await UserDictionary.findOne({
       user_id: userId,
       dictionary_id: dictionaryId
     }).populate('dictionary_id');
 
+    // **CRITICAL FIX**: If no progress exists for fresh user, auto-initialize it
     if (!userDictionary) {
-      return res.status(404).json({
-        error: 'Dictionary progress not found',
-        message: 'Please start the dictionary first'
+      // Get dictionary info to initialize progress
+      const dictionary = await DictionaryService.getDictionaryById(dictionaryId);
+      
+      // Create new UserDictionary record for fresh user
+      userDictionary = new UserDictionary({
+        user_id: userId,
+        dictionary_id: dictionaryId,
+        total_words: dictionary.total_words,
+        status: 'in_progress',
+        started_at: new Date(),
+        completed_words: 0,
+        correct_answers: 0,
+        wrong_answers: 0,
+        current_position: 0,
+        last_accessed: new Date()
       });
+      
+      await userDictionary.save();
+      
+      // Populate the dictionary_id field
+      userDictionary = await UserDictionary.findById(userDictionary._id).populate('dictionary_id');
+      
+      console.log('✅ Auto-initialized UserDictionary for fresh user:', userId, 'dictionary:', dictionaryId);
     }
 
     if (userDictionary.status === 'completed') {
@@ -453,15 +473,57 @@ const getDictionaryProgress = async (req, res) => {
     }
 
     // Get user's dictionary progress
-    const userDictionary = await UserDictionary.findOne({
+    let userDictionary = await UserDictionary.findOne({
       user_id: userId,
       dictionary_id: dictionaryId
     }).populate('dictionary_id');
 
+    // **CRITICAL FIX**: If no progress exists for fresh user, return default progress instead of 404
     if (!userDictionary) {
-      return res.status(404).json({
-        error: 'Dictionary progress not found',
-        message: 'No progress found for this dictionary'
+      // Get dictionary info to create default progress
+      const dictionary = await DictionaryService.getDictionaryById(dictionaryId);
+      
+      // Return default/empty progress structure
+      return res.json({
+        message: 'No progress found - returning default progress for fresh user',
+        progress: {
+          dictionary: {
+            id: dictionary._id,
+            name: dictionary.name,
+            display_name: dictionary.display_name,
+            total_words: dictionary.total_words
+          },
+          overall: {
+            status: 'not_started',
+            current_position: 0,
+            completed_words: 0,
+            completion_percentage: 0,
+            accuracy_rate: 0,
+            correct_answers: 0,
+            wrong_answers: 0,
+            started_at: null,
+            completed_at: null,
+            last_accessed: null
+          },
+          session_stats: {
+            session_count: 0,
+            total_session_time: 0,
+            average_session_time: 0,
+            last_session_date: null
+          },
+          word_level_stats: {
+            words_attempted: 0,
+            mastered_words: 0,
+            average_mastery_level: 0,
+            wrong_words_count: 0
+          },
+          settings: {
+            difficulty_preference: 'medium',
+            study_mode: 'normal',
+            auto_advance: true,
+            show_hints: false
+          }
+        }
       });
     }
 
@@ -508,6 +570,8 @@ const getDictionaryProgress = async (req, res) => {
           completed_words: userDictionary.completed_words,
           completion_percentage: userDictionary.completion_percentage,
           accuracy_rate: userDictionary.accuracy_rate,
+          correct_answers: userDictionary.correct_answers,
+          wrong_answers: userDictionary.wrong_answers,
           started_at: userDictionary.started_at,
           completed_at: userDictionary.completed_at,
           last_accessed: userDictionary.last_accessed

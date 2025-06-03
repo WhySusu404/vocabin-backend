@@ -74,18 +74,14 @@ const defaultUsers = [
 
 const seedUsers = async () => {
   try {
-    console.log('🌱 Starting user seeding...');
     
     // Connect to MongoDB
     await mongoose.connect(process.env.MONGODB_URI);
-    console.log('✅ Connected to MongoDB Atlas');
 
     // Clear existing users (optional - comment out if you want to keep existing users)
     const existingUsers = await User.countDocuments();
-    console.log(`📊 Found ${existingUsers} existing users`);
     
     // Create default users
-    console.log('👥 Creating default users...');
     const createdUsers = [];
     
     for (const userData of defaultUsers) {
@@ -94,7 +90,6 @@ const seedUsers = async () => {
         const existingUser = await User.findByEmail(userData.email);
         
         if (existingUser) {
-          console.log(`⚠️  User ${userData.email} already exists - skipping`);
           continue;
         }
         
@@ -103,28 +98,22 @@ const seedUsers = async () => {
         await user.save();
         createdUsers.push(user);
         
-        console.log(`✅ Created ${user.role}: ${user.email} (${user.fullName})`);
       } catch (error) {
         console.error(`❌ Failed to create user ${userData.email}:`, error.message);
       }
     }
     
-    // Summary
-    console.log(`\n📈 Seeding Summary:`);
-    console.log(`   • Total users created: ${createdUsers.length}`);
-    console.log(`   • Total users in database: ${await User.countDocuments()}`);
+   
     
     // Display created users
     if (createdUsers.length > 0) {
-      console.log(`\n👥 Created Users:`);
       createdUsers.forEach(user => {
-        console.log(`   • ${user.role.toUpperCase()}: ${user.email} | ${user.fullName}`);
+       
       });
     }
     
-    console.log(`\n🔐 Default Login Credentials:`);
     defaultUsers.forEach(user => {
-      console.log(`   • ${user.email} / ${user.password} (${user.role})`);
+     
     });
     
   } catch (error) {
@@ -133,7 +122,7 @@ const seedUsers = async () => {
   } finally {
     // Close database connection
     await mongoose.connection.close();
-    console.log('\n🔌 Database connection closed');
+    
     process.exit(0);
   }
 };

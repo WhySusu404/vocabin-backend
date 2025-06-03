@@ -28,6 +28,24 @@ const userSchema = new mongoose.Schema({
     trim: true,
     maxlength: [50, 'Last name cannot exceed 50 characters']
   },
+  phone: {
+    type: String,
+    trim: true,
+    maxlength: [20, 'Phone number cannot exceed 20 characters']
+  },
+  dateOfBirth: {
+    type: Date
+  },
+  gender: {
+    type: String,
+    enum: ['male', 'female', 'other', 'prefer-not-to-say', ''],
+    default: ''
+  },
+  country: {
+    type: String,
+    trim: true,
+    maxlength: [100, 'Country name cannot exceed 100 characters']
+  },
   role: {
     type: String,
     enum: ['learner', 'admin'],

@@ -166,13 +166,17 @@ const getProfile = async (req, res) => {
 // Update user profile
 const updateProfile = async (req, res) => {
   try {
-    const { firstName, lastName, learningPreferences } = req.body;
+    const { firstName, lastName, learningPreferences, phone, dateOfBirth, gender, country } = req.body;
     const userId = req.user._id;
 
     const updateData = {};
     if (firstName) updateData.firstName = firstName.trim();
     if (lastName) updateData.lastName = lastName.trim();
     if (learningPreferences) updateData.learningPreferences = learningPreferences;
+    if (phone !== undefined) updateData.phone = phone.trim();
+    if (dateOfBirth !== undefined) updateData.dateOfBirth = dateOfBirth;
+    if (gender !== undefined) updateData.gender = gender;
+    if (country !== undefined) updateData.country = country.trim();
 
     const user = await User.findByIdAndUpdate(
       userId,
