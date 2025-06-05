@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: vocabin-backend
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # Add these environment variables in Render dashboard:
+      # - MONGODB_URI (your MongoDB Atlas connection string)
+      # - JWT_SECRET (a secure random string)
+      # - FRONTEND_URL (your frontend URL from Netlify) 

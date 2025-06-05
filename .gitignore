@@ -76,3 +76,4 @@ jspm_packages/
 # Build outputs
 dist/
 build/ 
+mock_data/

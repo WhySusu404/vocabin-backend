@@ -8,8 +8,40 @@ dotenv.config();
 
 const app = express();
 
+// CORS Configuration for production
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Allow requests with no origin (mobile apps, etc.)
+    if (!origin) return callback(null, true);
+    
+    // In development, allow localhost
+    if (process.env.NODE_ENV === 'development') {
+      return callback(null, true);
+    }
+    
+    // In production, allow specific origins
+    const allowedOrigins = [
+      process.env.FRONTEND_URL,
+      'https://localhost:1234', // Parcel dev server
+      'http://localhost:1234',  // Parcel dev server
+      'https://127.0.0.1:1234',
+      'http://127.0.0.1:1234'
+    ].filter(Boolean); // Remove any undefined values
+    
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.warn(`CORS blocked origin: ${origin}`);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+
 // Middleware
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
