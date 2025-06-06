@@ -139,27 +139,54 @@ class DictionaryService {
    */
   async getWordByIndex(dictionaryId, wordIndex) {
     try {
+      console.log('🔍 DictionaryService.getWordByIndex called:', { dictionaryId, wordIndex });
+      
       const dictionary = await this.getDictionaryById(dictionaryId);
+      console.log('✅ Dictionary found in getWordByIndex:', dictionary.name);
+      
       const cacheKey = `${dictionary.name}_words`;
       
       let wordsData;
       if (this.wordCache.has(cacheKey)) {
         wordsData = this.wordCache.get(cacheKey);
+        console.log('✅ Words loaded from cache');
       } else {
         const filePath = path.join(this.dictPath, `${dictionary.name}.json`);
-        const fileContent = await fs.readFile(filePath, 'utf8');
-        wordsData = JSON.parse(fileContent);
+        console.log('🔍 Loading words from file:', filePath);
         
-        if (this.wordCache.size < 10) {
-          this.wordCache.set(cacheKey, wordsData);
+        try {
+          const fileContent = await fs.readFile(filePath, 'utf8');
+          wordsData = JSON.parse(fileContent);
+          console.log('✅ Words loaded from file, count:', wordsData.length);
+          
+          if (this.wordCache.size < 10) {
+            this.wordCache.set(cacheKey, wordsData);
+          }
+        } catch (fileError) {
+          console.error('❌ File read error:', fileError);
+          if (fileError.code === 'ENOENT') {
+            throw new Error(`Dictionary file not found: ${dictionary.name}.json`);
+          }
+          throw new Error(`Failed to read dictionary file: ${fileError.message}`);
         }
       }
 
+      if (!wordsData || !Array.isArray(wordsData)) {
+        throw new Error('Invalid dictionary file format');
+      }
+
       if (wordIndex < 0 || wordIndex >= wordsData.length) {
-        throw new Error('Word index out of range');
+        console.log('❌ Word index out of range:', { wordIndex, totalWords: wordsData.length });
+        throw new Error(`Word index ${wordIndex} out of range. Dictionary has ${wordsData.length} words.`);
       }
 
       const word = wordsData[wordIndex];
+      if (!word) {
+        throw new Error(`Word at index ${wordIndex} is null or undefined`);
+      }
+
+      console.log('✅ Word retrieved successfully:', word.name);
+      
       return {
         ...word,
         index: wordIndex,
@@ -172,6 +199,7 @@ class DictionaryService {
       };
 
     } catch (error) {
+      console.error('❌ DictionaryService.getWordByIndex error:', error);
       throw new Error(`Failed to get word by index: ${error.message}`);
     }
   }

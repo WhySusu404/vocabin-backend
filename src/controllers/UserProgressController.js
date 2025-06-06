@@ -231,9 +231,25 @@ const getCurrentWord = async (req, res) => {
     const userId = req.user._id;
     const { id: dictionaryId } = req.params;
     
+    console.log('🔍 DEBUG: getCurrentWord called', { userId, dictionaryId });
+    
     if (!dictionaryId || !dictionaryId.match(/^[0-9a-fA-F]{24}$/)) {
+      console.log('❌ Invalid dictionary ID format:', dictionaryId);
       return res.status(400).json({
         error: 'Invalid dictionary ID format'
+      });
+    }
+
+    // First, check if dictionary exists
+    let dictionary;
+    try {
+      dictionary = await DictionaryService.getDictionaryById(dictionaryId);
+      console.log('✅ Dictionary found:', dictionary.display_name);
+    } catch (error) {
+      console.log('❌ Dictionary not found:', error.message);
+      return res.status(404).json({
+        error: 'Dictionary not found',
+        message: error.message
       });
     }
 
@@ -245,8 +261,7 @@ const getCurrentWord = async (req, res) => {
 
     // **CRITICAL FIX**: If no progress exists for fresh user, auto-initialize it
     if (!userDictionary) {
-      // Get dictionary info to initialize progress
-      const dictionary = await DictionaryService.getDictionaryById(dictionaryId);
+      console.log('🔧 No UserDictionary found, auto-initializing for fresh user');
       
       // Create new UserDictionary record for fresh user
       userDictionary = new UserDictionary({
@@ -271,15 +286,28 @@ const getCurrentWord = async (req, res) => {
     }
 
     if (userDictionary.status === 'completed') {
+      console.log('⚠️ Dictionary already completed');
       return res.status(400).json({
         error: 'Dictionary already completed',
         message: 'All words in this dictionary have been completed'
       });
     }
 
-    // Get the current word
+    // Get the current word with better error handling
     const currentWordIndex = userDictionary.current_position;
-    const word = await DictionaryService.getWordByIndex(dictionaryId, currentWordIndex);
+    console.log('🔍 Getting word at index:', currentWordIndex);
+    
+    let word;
+    try {
+      word = await DictionaryService.getWordByIndex(dictionaryId, currentWordIndex);
+      console.log('✅ Word retrieved:', word.name);
+    } catch (error) {
+      console.log('❌ Failed to get word by index:', error.message);
+      return res.status(404).json({
+        error: 'Word not found',
+        message: `Word at index ${currentWordIndex} not found: ${error.message}`
+      });
+    }
     
     // Check if user has previous progress with this word
     const wordProgress = await UserWordProgress.findOne({
@@ -288,6 +316,8 @@ const getCurrentWord = async (req, res) => {
       word: word.name
     });
 
+    console.log('✅ getCurrentWord success for user:', userId);
+    
     res.json({
       message: 'Current word retrieved successfully',
       word: {
@@ -304,23 +334,47 @@ const getCurrentWord = async (req, res) => {
         current_position: userDictionary.current_position,
         total_words: userDictionary.total_words,
         completed_words: userDictionary.completed_words,
-        completion_percentage: userDictionary.completion_percentage
+        completion_percentage: userDictionary.completion_percentage,
+        overall: {
+          completed_words: userDictionary.completed_words,
+          accuracy_rate: userDictionary.accuracy_rate || 0,
+          correct_answers: userDictionary.correct_answers || 0,
+          wrong_answers: userDictionary.wrong_answers || 0,
+          status: userDictionary.status,
+          current_position: userDictionary.current_position
+        }
       }
     });
 
   } catch (error) {
-    console.error('Get current word error:', error);
+    console.error('❌ Get current word error:', error);
+    console.error('❌ Error stack:', error.stack);
     
-    if (error.message.includes('not found') || error.message.includes('out of range')) {
+    // More specific error handling
+    if (error.message.includes('not found')) {
       return res.status(404).json({
-        error: 'Word not found',
+        error: 'Resource not found',
         message: error.message
+      });
+    }
+    
+    if (error.message.includes('out of range')) {
+      return res.status(404).json({
+        error: 'Word index out of range',
+        message: error.message
+      });
+    }
+    
+    if (error.message.includes('ENOENT') || error.message.includes('file')) {
+      return res.status(500).json({
+        error: 'Dictionary file not found',
+        message: 'Dictionary file is missing or inaccessible'
       });
     }
     
     res.status(500).json({
       error: 'Failed to get current word',
-      message: error.message
+      message: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
     });
   }
 };
