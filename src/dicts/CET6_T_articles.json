@@ -1,0 +1,55 @@
+{
+  "dictionaryId": "CET6_T",
+  "articles": [
+    {
+      "id": "cet6_article_001",
+      "title": "The Surgeon's Dilemma in Modern Healthcare",
+      "difficulty": "intermediate",
+      "topic": "healthcare",
+      "estimatedReadingTime": "4 min",
+      "content": "A renowned surgeon faced an abrupt decision that would test her professional ethics. The spacious operating room fell silent as she analyzed the patient's condition. The hospital's disapproval of experimental procedures was well-known, yet this case warranted unconventional treatment. Her persistent efforts to authorize the innovative surgery met with bureaucratic resistance. The gloomy atmosphere in the cafeteria reflected the staff's concerns about the institution's rigid policies. Meanwhile, fluctuating patient outcomes had caused many to reproach the administration's conservative approach. The surgeon's spontaneous decision to proceed despite official opposition would either vindicate her judgment or result in professional rupture. This remote possibility of career destruction could not deter her from what she believed was necessary to save a life. The compartment of medical ethics rarely accommodates such moral complexity, where numerous factors must be calculated against potential consequences.",
+      "targetWords": ["surgeon", "abrupt", "spacious", "disapproval", "analyse", "warrant", "persistent", "authorize", "gloomy", "cafeteria", "fluctuate", "reproach", "spontaneous", "rupture", "remote", "compartment", "numerous", "calculate"],
+      "createdDate": "2024-01-20"
+    },
+    {
+      "id": "cet6_article_002",
+      "title": "Virgin Territories and Environmental Conservation",
+      "difficulty": "advanced",
+      "topic": "environment",
+      "estimatedReadingTime": "5 min",
+      "content": "Conservation efforts in virgin forests have become increasingly urgent as industrial expansion threatens these pristine ecosystems. Scientists must analyse complex data to calculate the environmental impact of proposed developments. The abrupt disappearance of wildlife in numerous areas has prompted authorities to authorize emergency protection measures. Remote sensing technology enables researchers to monitor spacious wilderness areas that were previously inaccessible. However, gloomy predictions about biodiversity loss continue to afflict conservationists worldwide. The persistent challenge lies in balancing economic development with environmental protection. Spontaneous protests have erupted as communities reproach government policies that they perceive as inadequate. Meanwhile, the rupture between environmental activists and industrial lobbyists has widened considerably. The surgeon-like precision required in crafting conservation policies demands careful consideration of multiple factors. In the cafeteria of public opinion, environmental issues fluctuate between periods of intense concern and apparent indifference, creating an unpredictable landscape for policy makers.",
+      "targetWords": ["virgin", "analyse", "calculate", "abrupt", "numerous", "authorize", "remote", "spacious", "gloomy", "afflict", "persistent", "spontaneous", "reproach", "rupture", "surgeon", "cafeteria", "fluctuate"],
+      "createdDate": "2024-01-21"
+    },
+    {
+      "id": "cet6_article_003",
+      "title": "The Psychology of Spontaneous Decision Making",
+      "difficulty": "advanced",
+      "topic": "psychology",
+      "estimatedReadingTime": "4 min",
+      "content": "Psychological research has revealed that spontaneous decisions often occur when individuals face abrupt changes in their environment. Unlike a surgeon who can calculate risks methodically, ordinary people must analyse situations rapidly with limited information. The spacious realm of human cognition includes numerous compartments dedicated to different types of decision-making processes. Researchers authorize various experimental designs to study how people respond to remote possibilities and uncertain outcomes. The persistent nature of cognitive biases can afflict even the most rational individuals, leading to errors in judgment. Meanwhile, the gloomy prospect of making wrong choices creates anxiety that fluctuates based on situational factors. In the metaphorical cafeteria of mental processes, different cognitive systems compete for attention and influence. When faced with disapproval from others, people may reproach themselves for past decisions, potentially leading to a psychological rupture between confidence and self-doubt. Understanding these mechanisms requires careful analysis of the warrant for each decision and the factors that trigger specific responses.",
+      "targetWords": ["spontaneous", "abrupt", "surgeon", "calculate", "analyse", "spacious", "numerous", "compartment", "authorize", "remote", "persistent", "afflict", "gloomy", "fluctuate", "cafeteria", "disapproval", "reproach", "rupture", "warrant"],
+      "createdDate": "2024-01-22"
+    },
+    {
+      "id": "cet6_article_004",
+      "title": "Financial Markets and Economic Fluctuations",
+      "difficulty": "intermediate",
+      "topic": "economics",
+      "estimatedReadingTime": "4 min",
+      "content": "Financial markets are characterized by persistent volatility that can afflict even experienced investors. Economic analysts must calculate numerous variables and analyse market trends to warrant their investment recommendations. The abrupt collapse of major financial institutions has led to widespread disapproval of deregulation policies. In the spacious trading floors of major exchanges, spontaneous reactions to news can trigger market fluctuations that reproach conventional economic theory. Meanwhile, remote trading technologies have transformed how investors authorize transactions across global markets. The gloomy atmosphere following market crashes resembles the tension in a surgeon's operating room during critical procedures. Economic compartments that were once separate now show interconnected vulnerabilities, creating a rupture in traditional risk management approaches. The cafeteria conversations of financial professionals often reveal concerns about regulatory oversight and market stability. Virgin territories in financial innovation continue to emerge, challenging established practices and requiring adaptive strategies from market participants.",
+      "targetWords": ["persistent", "afflict", "calculate", "numerous", "analyse", "warrant", "abrupt", "disapproval", "spacious", "spontaneous", "fluctuate", "reproach", "remote", "authorize", "gloomy", "surgeon", "compartment", "rupture", "cafeteria", "virgin"],
+      "createdDate": "2024-01-23"
+    },
+    {
+      "id": "cet6_article_005",
+      "title": "Academic Research in the Digital Age",
+      "difficulty": "advanced",
+      "topic": "education",
+      "estimatedReadingTime": "5 min",
+      "content": "Modern academic research requires scholars to analyse vast amounts of data and calculate statistical significance with unprecedented precision. The spacious digital libraries of today contrast sharply with the cramped compartments of traditional archives. University authorities must authorize access to remote databases while managing persistent concerns about academic integrity. The abrupt transition to digital methodologies has met with some disapproval from traditionalist researchers who reproach the over-reliance on technology. Meanwhile, the gloomy prediction that artificial intelligence might replace human researchers has begun to afflict the academic community. Spontaneous collaborations across disciplines have created new research paradigms that warrant careful evaluation. Like a surgeon performing delicate operations, researchers must navigate the complex terrain of peer review and publication. The cafeteria discussions among faculty often revolve around how technological advances continue to fluctuate the landscape of scholarly inquiry. Virgin territories in interdisciplinary research offer exciting possibilities, but they also present challenges that may cause a rupture with established academic traditions. The numerous opportunities for innovation must be balanced against the need for rigorous methodology and ethical considerations.",
+      "targetWords": ["analyse", "calculate", "spacious", "compartment", "authorize", "remote", "persistent", "abrupt", "disapproval", "reproach", "gloomy", "afflict", "spontaneous", "warrant", "surgeon", "cafeteria", "fluctuate", "virgin", "rupture", "numerous"],
+      "createdDate": "2024-01-24"
+    }
+  ]
+} 

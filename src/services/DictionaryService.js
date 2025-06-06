@@ -4,7 +4,7 @@ const Dictionary = require('../models/Dictionary');
 
 class DictionaryService {
   constructor() {
-    this.dictPath = path.join(__dirname, '../../../vocabin-frontend/src/dicts');
+    this.dictPath = path.join(__dirname, '../dicts');
     this.wordCache = new Map(); // Cache for frequently accessed words
   }
 

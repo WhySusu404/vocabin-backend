@@ -1,0 +1,55 @@
+{
+  "dictionaryId": "CET4_T",
+  "articles": [
+    {
+      "id": "cet4_article_001",
+      "title": "The Remote Work Revolution",
+      "difficulty": "intermediate",
+      "topic": "business",
+      "estimatedReadingTime": "3 min",
+      "content": "The recent pandemic has caused numerous companies to analyse their traditional work policies. Many organizations now govern their operations remotely, allowing employees to calculate their productivity from home. This explosive change has transformed the modern workplace. While some companies discourage remote work, others possess a more flexible approach. The salary structure may resemble traditional office jobs, but the investment in technology has increased significantly. Meanwhile, employees must pretend to maintain the same level of competence while working from their kettle-filled kitchens. This persistent trend shows no signs of wreck, as companies continue to explore neutral policies that benefit both employers and workers.",
+      "targetWords": ["numerous", "analyse", "govern", "remote", "calculate", "explosive", "discourage", "possess", "salary", "resemble", "investment", "meanwhile", "pretend", "competent", "kettle", "persistent", "wreck", "neutral"],
+      "createdDate": "2024-01-15"
+    },
+    {
+      "id": "cet4_article_002", 
+      "title": "Environmental Pollution Crisis",
+      "difficulty": "intermediate",
+      "topic": "environment",
+      "estimatedReadingTime": "4 min",
+      "content": "Environmental pollution has become a persistent problem that numerous governments cannot ignore. Scientists analyse air quality data and calculate the long-term effects on public health. The explosive growth of industrial cities has created remote areas where pollution levels resemble those of major metropolitan centers. Many companies possess the technology to reduce emissions but discourage investment in cleaner alternatives for the sake of profit. Meanwhile, the audience of environmental activists continues to grow, demanding that corporations cannot conceal their environmental impact. This competent movement seeks to govern how businesses operate, ensuring they invest in sustainable practices rather than pretend the problem doesn't exist.",
+      "targetWords": ["pollution", "persistent", "numerous", "analyse", "calculate", "explosive", "remote", "resemble", "possess", "discourage", "investment", "sake", "meanwhile", "audience", "conceal", "competent", "govern", "pretend"],
+      "createdDate": "2024-01-16"
+    },
+    {
+      "id": "cet4_article_003",
+      "title": "Student Life and Academic Success", 
+      "difficulty": "beginner",
+      "topic": "education",
+      "estimatedReadingTime": "3 min",
+      "content": "University students must analyse their study habits to calculate their chances of academic success. Numerous students possess the ability to succeed but discourage themselves with negative thinking. The explosive growth of online learning platforms has created remote opportunities that resemble traditional classroom experiences. Meanwhile, competent students invest time in building relationships with their audience - professors and classmates. They don't pretend to understand everything immediately but persist in their efforts. For the sake of their future career and salary prospects, students must govern their time wisely and not let academic pressure wreck their mental health. A neutral approach to stress management helps maintain long-term success.",
+      "targetWords": ["analyse", "calculate", "numerous", "possess", "discourage", "explosive", "remote", "resemble", "meanwhile", "competent", "investment", "audience", "pretend", "persistent", "sake", "salary", "govern", "wreck", "neutral"],
+      "createdDate": "2024-01-17"
+    },
+    {
+      "id": "cet4_article_004",
+      "title": "Modern Technology and Daily Life",
+      "difficulty": "intermediate", 
+      "topic": "technology",
+      "estimatedReadingTime": "3 min",
+      "content": "Technology has transformed numerous aspects of our daily lives in ways that resemble science fiction. Smart devices now govern our morning routines - from the kettle that starts brewing coffee automatically to phones that calculate our daily steps. This explosive advancement allows us to possess incredible computing power in our pockets. Meanwhile, we must analyse how technology affects our social relationships. Some people discourage face-to-face interaction and pretend that digital communication is sufficient. However, competent individuals invest time in maintaining real connections with their audience of friends and family. For the sake of mental health, we shouldn't let technology wreck our ability to engage in meaningful conversations. A neutral approach helps us embrace beneficial technology while avoiding its persistent distractions.",
+      "targetWords": ["numerous", "resemble", "govern", "kettle", "calculate", "explosive", "possess", "meanwhile", "analyse", "discourage", "pretend", "competent", "investment", "audience", "sake", "wreck", "neutral", "persistent"],
+      "createdDate": "2024-01-18"
+    },
+    {
+      "id": "cet4_article_005",
+      "title": "Career Planning for Young Adults",
+      "difficulty": "intermediate",
+      "topic": "career", 
+      "estimatedReadingTime": "4 min",
+      "content": "Young adults face numerous challenges when planning their careers in today's competitive market. They must analyse job opportunities and calculate which skills will be most valuable. The explosive growth of remote work has created opportunities that resemble traditional office jobs but offer more flexibility. Meanwhile, competent career advisors discourage students from choosing paths based solely on salary expectations. Instead, they should invest time in understanding what they truly possess in terms of talents and interests. Many young people pretend to have clear career goals but actually conceal their uncertainty from their audience of family and friends. For the sake of long-term happiness, it's important to maintain a neutral perspective and not let societal pressure wreck personal aspirations. This persistent journey of self-discovery requires patience and honest self-reflection.",
+      "targetWords": ["numerous", "analyse", "calculate", "explosive", "remote", "resemble", "meanwhile", "competent", "discourage", "salary", "investment", "possess", "pretend", "conceal", "audience", "sake", "neutral", "wreck", "persistent"],
+      "createdDate": "2024-01-19"
+    }
+  ]
+} 
